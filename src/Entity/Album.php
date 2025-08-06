@@ -8,10 +8,14 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: AlbumRepository::class)]
 class Album
 {
+    /**
+     * @var int|null
+     */
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column]
     private ?int $id = null;
+
 
     #[ORM\Column]
     private string $name;
@@ -24,7 +28,7 @@ class Album
     public function getName(): string
     {
         return $this->name;
-    }
+    } 
 
     public function setName(string $name): void
     {

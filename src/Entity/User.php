@@ -11,15 +11,15 @@ use Doctrine\ORM\Mapping as ORM;
 class User
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column]
     private bool $admin = false;
-
-    #[ORM\Column]
-    private ?string $name;
+ 
+    #[ORM\Column(nullable: true)]
+    private ?string $name = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description;

@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 
 class AlbumController extends AbstractController
 {
@@ -39,13 +40,8 @@ class AlbumController extends AbstractController
     }
 
     #[Route('/admin/album/update/{id}', name: 'admin_album_update')]
-    public function update(Request $request, ManagerRegistry $doctrine, int $id): Response
+    public function update(Request $request, #[MapEntity] Album $album, ManagerRegistry $doctrine): Response
     {
-        $album = $doctrine->getRepository(Album::class)->find($id);
-        if (!$album) {
-            throw $this->createNotFoundException("Album not found");
-        }
-
         $form = $this->createForm(AlbumType::class, $album);
         $form->handleRequest($request);
 
@@ -59,13 +55,8 @@ class AlbumController extends AbstractController
     }
 
     #[Route('/admin/album/delete/{id}', name: 'admin_album_delete')]
-    public function delete(ManagerRegistry $doctrine, int $id): Response
+    public function delete(#[MapEntity] Album $album, ManagerRegistry $doctrine): Response
     {
-        $album = $doctrine->getRepository(Album::class)->find($id);
-        if (!$album) {
-            throw $this->createNotFoundException("Album not found");
-        }
-
         $em = $doctrine->getManager();
         $em->remove($album);
         $em->flush();

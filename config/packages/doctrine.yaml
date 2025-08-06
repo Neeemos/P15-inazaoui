@@ -9,7 +9,7 @@ doctrine:
 
         # ✅ Fix 1 : auto_mapping devient explicite
         controller_resolver:
-            auto_mapping: true # ← Ajouté pour supprimer le warning de valeur par défaut future
+            auto_mapping: false 
 
         # ✅ Fix 2 : lazy ghost objects recommandés
         enable_lazy_ghost_objects: true

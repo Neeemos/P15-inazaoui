@@ -9,6 +9,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 
 class HomeController extends AbstractController
 {
@@ -30,33 +31,26 @@ class HomeController extends AbstractController
     }
 
     #[Route('/guest/{id}', name: 'guest')]
-    public function guest(ManagerRegistry $doctrine, int $id): Response
+    public function guest(#[MapEntity] User $guest): Response
     {
-        $guest = $doctrine->getRepository(User::class)->find($id);
-
-        if (!$guest) {
-            throw $this->createNotFoundException('Guest not found.');
-        }
-
         return $this->render('front/guest.html.twig', [
             'guest' => $guest,
         ]);
     }
 
-    #[Route('/portfolio/{id}', name: 'portfolio')]
-    public function portfolio(ManagerRegistry $doctrine, ?int $id = null): Response
+    #[Route('/portfolio/{id?}', name: 'portfolio')]
+    public function portfolio(ManagerRegistry $doctrine, #[MapEntity] ?Album $album = null): Response
     {
         $albumRepository = $doctrine->getRepository(Album::class);
         $userRepository = $doctrine->getRepository(User::class);
         $mediaRepository = $doctrine->getRepository(Media::class);
 
         $albums = $albumRepository->findAll();
-        $album = $id ? $albumRepository->find($id) : null;
         $user = $userRepository->findOneBy(['admin' => true]);
 
         $medias = $album
             ? $mediaRepository->findBy(['album' => $album])
-            : $mediaRepository->findBy(['user' => $user]);
+            : $mediaRepository->findAll();
 
         return $this->render('front/portfolio.html.twig', [
             'albums' => $albums,

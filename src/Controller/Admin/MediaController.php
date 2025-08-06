@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 
 class MediaController extends AbstractController
 {
@@ -33,7 +34,6 @@ class MediaController extends AbstractController
         );
 
         $total = count($mediaRepository->findAll());
-
 
         return $this->render('admin/media/index.html.twig', [
             'medias' => $medias,
@@ -78,14 +78,8 @@ class MediaController extends AbstractController
     }
 
     #[Route('/admin/media/delete/{id}', name: 'admin_media_delete')]
-    public function delete(int $id, ManagerRegistry $doctrine): Response
+    public function delete(#[MapEntity] Media $media, ManagerRegistry $doctrine): Response
     {
-        $media = $doctrine->getRepository(Media::class)->find($id);
-
-        if (!$media) {
-            throw $this->createNotFoundException("Media not found");
-        }
-
         $path = $media->getPath();
         $em = $doctrine->getManager();
         $em->remove($media);

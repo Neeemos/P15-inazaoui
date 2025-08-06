@@ -12,7 +12,7 @@ class Album
      * @var int|null
      */
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column]
     private ?int $id = null;
 
@@ -28,7 +28,7 @@ class Album
     public function getName(): string
     {
         return $this->name;
-    }
+    } 
 
     public function setName(string $name): void
     {

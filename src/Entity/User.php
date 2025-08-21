@@ -18,8 +18,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private bool $admin = false;
 
     #[ORM\Column(nullable: true)]
     private ?string $name = null;
@@ -97,16 +95,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setMedias(Collection $medias): void
     {
         $this->medias = $medias;
-    }
-
-    public function isAdmin(): bool
-    {
-        return $this->admin;
-    }
-
-    public function setAdmin(bool $admin): void
-    {
-        $this->admin = $admin;
     }
 
     public function getPassword(): ?string

@@ -57,6 +57,7 @@ class MediaController extends AbstractController
                 }
             }
 
+
             /** @var UploadedFile|null $file */
             $file = $media->getFile();
             if ($file !== null) {

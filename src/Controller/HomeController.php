@@ -22,8 +22,9 @@ class HomeController extends AbstractController
     #[Route('/guests', name: 'guests')]
     public function guests(ManagerRegistry $doctrine): Response
     {
+  
         $guestRepository = $doctrine->getRepository(User::class);
-        $guests = $guestRepository->findBy(['admin' => false]);
+        $guests = $doctrine->getRepository(User::class)->findGuests();
 
         return $this->render('front/guests.html.twig', [
             'guests' => $guests,
@@ -46,7 +47,6 @@ class HomeController extends AbstractController
         $mediaRepository = $doctrine->getRepository(Media::class);
 
         $albums = $albumRepository->findAll();
-        $user = $userRepository->findOneBy(['admin' => true]);
 
         $medias = $album
             ? $mediaRepository->findBy(['album' => $album])

@@ -59,9 +59,12 @@ class MediaController extends AbstractController
 
 
             /** @var UploadedFile|null $file */
-            $file = $media->getFile();
+            $file = $form->get('file')->getData();
+      
             if ($file !== null) {
+
                 $filename = 'uploads/' . md5(uniqid((string) random_int(0, 1000), true)) . '.' . $file->guessExtension();
+
                 $media->setPath($filename);
                 $file->move('uploads/', basename($filename));
             }

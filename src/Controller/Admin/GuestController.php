@@ -15,9 +15,9 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class GuestController extends AbstractController
 {
     #[Route('/', name: 'admin_guest_index')]
-    public function index(EntityManagerInterface $em): Response
+    public function index(EntityManagerInterface $manager): Response
     {
-        $guests = $em->getRepository(User::class)->findGuests();
+        $guests = $manager->getRepository(User::class)->findAll();
 
         return $this->render('admin/guest/index.html.twig', [
             'guests' => $guests,
@@ -25,65 +25,67 @@ class GuestController extends AbstractController
     }
 
     #[Route('/add', name: 'admin_guest_add')]
-    public function add(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher): Response
+    public function add(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
     {
         $user = new User();
-        $form = $this->createForm(UserType::class, $user, [
-            'is_edit' => false, 
-        ]);
+        $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user->setRoles($user->getRoles() ?: ['ROLE_GUEST']); 
+            $user->setRoles($user->getRoles() ?: ['ROLE_GUEST']);
 
             $user->setPassword($hasher->hashPassword($user, $user->getPassword()));
 
-            $em->persist($user);
-            $em->flush();
+            $manager->persist($user);
+            $manager->flush();
 
             return $this->redirectToRoute('admin_guest_index');
         }
 
-        return $this->render('admin/guest/add.html.twig', [
+        return $this->render('admin/guest/form.html.twig', [
             'form' => $form->createView(),
         ]);
     }
 
-     #[Route('/add', name: 'admin_guest_update')]
-    public function edit(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $hasher): Response
+    #[Route('/update/{id}', name: 'admin_guest_update')]
+    public function edit(int $id, Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
     {
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user, [
-            'is_edit' => true, 
-        ]);
+        $user = $manager->getRepository(User::class)->find($id);
+
+        $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-           
+            if ($user->getPassword()) {
+                $user->setPassword($hasher->hashPassword($user, $user->getPassword()));
+            }
+
+            $manager->flush();
 
             return $this->redirectToRoute('admin_guest_index');
         }
 
-        return $this->render('admin/guest/add.html.twig', [
+        return $this->render('admin/guest/form.html.twig', [
             'form' => $form->createView(),
+            'user' => $user,
         ]);
     }
-    
+
 
 
     #[Route('/delete/{id}', name: 'admin_guest_delete')]
-    public function delete(User $user, EntityManagerInterface $em): Response
+    public function delete(User $user, EntityManagerInterface $manager): Response
     {
         foreach ($user->getMedias() as $media) {
-            $em->remove($media);
+            $manager->remove($media);
             $filePath = $media->getPath();
             if (file_exists($filePath)) {
                 unlink($filePath);
             }
         }
 
-        $em->remove($user);
-        $em->flush();
+        $manager->remove($user);
+        $manager->flush();
 
         return $this->redirectToRoute('admin_guest_index');
     }

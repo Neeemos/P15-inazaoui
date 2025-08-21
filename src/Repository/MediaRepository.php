@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Media;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\Album;
 
 /**
  * @extends ServiceEntityRepository<Media>
@@ -19,5 +20,39 @@ class MediaRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Media::class);
+    }
+
+    public function findByAlbumAndUserRole(?Album $album, string $role = 'ROLE_GUEST'): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+        SELECT m.*
+        FROM media m
+        INNER JOIN "user" u ON u.id = m.user_id
+        WHERE u.roles::jsonb @> :role
+    ';
+
+        $params = ['role' => json_encode([$role])];
+        $types = ['role' => \PDO::PARAM_STR];
+
+        if ($album !== null) {
+            $sql .= ' AND m.album_id = :albumId';
+            $params['albumId'] = $album->getId();
+            $types['albumId'] = \PDO::PARAM_INT;
+        }
+
+        $stmt = $conn->executeQuery($sql, $params, $types);
+        $rows = $stmt->fetchAllAssociative();
+
+        if (empty($rows)) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('m')
+            ->where('m.id IN (:ids)')
+            ->setParameter('ids', array_column($rows, 'id'))
+            ->getQuery()
+            ->getResult();
     }
 }

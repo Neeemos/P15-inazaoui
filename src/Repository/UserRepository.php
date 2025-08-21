@@ -37,4 +37,36 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
     }
+    public function findGuests(): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+        SELECT u.id
+        FROM "user" u
+        WHERE u.roles::jsonb @> :role
+        ORDER BY u.id ASC
+    ';
+
+        $stmt = $conn->executeQuery(
+            $sql,
+            ['role' => json_encode(['ROLE_GUEST'])],
+            ['role' => \PDO::PARAM_STR]
+        );
+
+        $userIds = array_column($stmt->fetchAllAssociative(), 'id');
+
+        if (empty($userIds)) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('u')
+            ->leftJoin('u.medias', 'm')
+            ->addSelect('m')
+            ->where('u.id IN (:ids)')
+            ->setParameter('ids', $userIds)
+            ->orderBy('u.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

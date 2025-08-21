@@ -5,19 +5,20 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private bool $admin = false;
- 
+
     #[ORM\Column(nullable: true)]
     private ?string $name = null;
 
@@ -32,6 +33,12 @@ class User
      */
     #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'user')]
     private Collection $medias;
+
+    #[ORM\Column(length: 255)]
+    private ?string $password = null;
+
+    #[ORM\Column]
+    private array $roles = [];
 
     public function __construct()
     {
@@ -90,13 +97,40 @@ class User
         $this->medias = $medias;
     }
 
-    public function isAdmin(): bool
+    public function getPassword(): ?string
     {
-        return $this->admin;
+        return $this->password;
     }
 
-    public function setAdmin(bool $admin): void
+    public function setPassword(string $password): static
     {
-        $this->admin = $admin;
+        $this->password = $password;
+
+        return $this;
     }
+
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+        return $this;
+    }
+    public function getUserIdentifier(): string
+    {
+        return $this->email ?? '';
+    }
+
+    public function eraseCredentials(): void
+    {
+    }
+
+
 }

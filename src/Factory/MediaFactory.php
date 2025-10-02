@@ -31,7 +31,7 @@ final class MediaFactory extends PersistentProxyObjectFactory
     {
         return [
             'title' => self::faker()->sentence(3),
-            'path' => 'images/ina.png',
+            'path' => 'images/ina.webp',
             // Lien vers un Album aléatoire déjà créé
             'album' => AlbumFactory::random(),
             // Lien vers un User aléatoire si besoin
@@ -42,7 +42,7 @@ final class MediaFactory extends PersistentProxyObjectFactory
     {
         return self::createOne([
             'title' => 'Image INA',
-            'path' => 'images/ina.png',
+            'path' => 'images/ina.webp',
             'album' => AlbumFactory::find(['id' => "1"]),
         ]);
     }

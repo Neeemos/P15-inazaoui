@@ -16,7 +16,8 @@ class AlbumController extends AbstractController
     #[Route('/admin/album', name: 'admin_album_index')]
     public function index(ManagerRegistry $doctrine): Response
     {
-        $albums = $doctrine->getRepository(Album::class)->findAll();
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $albums = $doctrine->getRepository(Album::class)->findBy([], ['id' => 'ASC']);
 
         return $this->render('admin/album/index.html.twig', ['albums' => $albums]);
     }
@@ -24,11 +25,13 @@ class AlbumController extends AbstractController
     #[Route('/admin/album/add', name: 'admin_album_add')]
     public function add(Request $request, ManagerRegistry $doctrine): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $album = new Album();
         $form = $this->createForm(AlbumType::class, $album);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $em = $doctrine->getManager();
             $em->persist($album);
             $em->flush();
@@ -42,9 +45,9 @@ class AlbumController extends AbstractController
     #[Route('/admin/album/update/{id}', name: 'admin_album_update')]
     public function update(Request $request, #[MapEntity] Album $album, ManagerRegistry $doctrine): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $form = $this->createForm(AlbumType::class, $album);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $doctrine->getManager()->flush();
 
@@ -57,6 +60,7 @@ class AlbumController extends AbstractController
     #[Route('/admin/album/delete/{id}', name: 'admin_album_delete')]
     public function delete(#[MapEntity] Album $album, ManagerRegistry $doctrine): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $em = $doctrine->getManager();
         $em->remove($album);
         $em->flush();

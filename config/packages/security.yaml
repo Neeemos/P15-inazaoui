@@ -16,10 +16,11 @@ security:
             form_login:
                 login_path: admin_login
                 check_path: admin_login
+            user_checker: App\Security\UserChecker
     role_hierarchy:
         ROLE_ADMIN: ROLE_ADMIN
     access_control:
-        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/admin, roles: ['ROLE_ADMIN', 'ROLE_GUEST'] }
 
 when@test:
     security:

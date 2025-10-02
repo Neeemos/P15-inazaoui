@@ -5,11 +5,15 @@ namespace App\Controller;
 use App\Entity\Album;
 use App\Entity\Media;
 use App\Entity\User;
+use App\Repository\AlbumRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use App\Repository\MediaRepository;
+use App\Repository\UserRepository;
+
 
 class HomeController extends AbstractController
 {
@@ -20,11 +24,9 @@ class HomeController extends AbstractController
     }
 
     #[Route('/guests', name: 'guests')]
-    public function guests(ManagerRegistry $doctrine): Response
+    public function guests(UserRepository $userRepository): Response
     {
-  
-        $guestRepository = $doctrine->getRepository(User::class);
-        $guests = $doctrine->getRepository(User::class)->findGuests();
+        $guests = $userRepository->findGuests();
 
         return $this->render('front/guests.html.twig', [
             'guests' => $guests,
@@ -40,17 +42,11 @@ class HomeController extends AbstractController
     }
 
     #[Route('/portfolio/{id?}', name: 'portfolio')]
-    public function portfolio(ManagerRegistry $doctrine, #[MapEntity] ?Album $album = null): Response
+    public function portfolio(ManagerRegistry $doctrine, MediaRepository $mediaRepository, AlbumRepository $albumRepository, #[MapEntity] ?Album $album = null ): Response
     {
-        $albumRepository = $doctrine->getRepository(Album::class);
-        $userRepository = $doctrine->getRepository(User::class);
-        $mediaRepository = $doctrine->getRepository(Media::class);
 
         $albums = $albumRepository->findAll();
-
-        $medias = $album
-            ? $mediaRepository->findBy(['album' => $album])
-            : $mediaRepository->findAll();
+        $medias = $mediaRepository->findByAlbumAndUserRole($album, 'ROLE_GUEST');
 
         return $this->render('front/portfolio.html.twig', [
             'albums' => $albums,

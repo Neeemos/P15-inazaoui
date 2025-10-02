@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Entity;
 
 use App\Repository\UserRepository;
@@ -31,7 +32,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Media>
      */
-    #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'user')]
+    #[ORM\OneToMany(targetEntity: Media::class, mappedBy: 'user', cascade: ['remove'], orphanRemoval: true)]
     private Collection $medias;
 
     #[ORM\Column(length: 255)]
@@ -128,9 +129,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email ?? '';
     }
 
-    public function eraseCredentials(): void
-    {
-    }
-
-
+    public function eraseCredentials(): void {}
 }

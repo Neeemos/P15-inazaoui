@@ -1,0 +1,18 @@
+{% extends 'admin.html.twig' %}
+{% block admin %}
+    <h1>
+        Invité
+    </h1>
+    {{ form_start(form) }}
+    <div class="mb-3">
+        {{ form_row(form.name) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.password) }}
+        {{ form_row(form.description) }}
+        {{ form_row(form.roles) }}
+    </div>
+    <button class="btn btn-success">
+        Ajouter
+    </button>
+    {{ form_end(form) }}
+{% endblock %}

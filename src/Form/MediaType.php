@@ -12,6 +12,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
 /**
  * @extends AbstractType<Media>
  */
@@ -23,7 +25,7 @@ class MediaType extends AbstractType
             ->add('file', FileType::class, [
                 'label' => 'Fichier média',
                 'mapped' => false,
-                'required' => true,
+                'required' => false,
                 'constraints' => [
                     new File([
                         'maxSize' => '2M',
@@ -31,8 +33,13 @@ class MediaType extends AbstractType
                             'image/jpeg',
                             'image/png',
                             'image/jpg',
+                            'image/webp',
                         ],
                         'mimeTypesMessage' => 'Format de fichier non autorisé.',
+                    ]),
+                    new NotBlank([
+                        'message' => 'Veuillez sélectionner un fichier.',
+                        'groups' => ['create'],
                     ])
                 ],
             ])
@@ -48,15 +55,15 @@ class MediaType extends AbstractType
                     'required' => false,
                     'class' => User::class,
                     'choice_label' => 'name',
-                ])
-                ->add('album', EntityType::class, [
-                    'label' => 'Album',
-                    'required' => false,
-                    'class' => Album::class,
-                    'choice_label' => 'name',
-                ])
-            ;
+                ]);
         }
+        $builder
+            ->add('album', EntityType::class, [
+                'label' => 'Album',
+                'required' => false,
+                'class' => Album::class,
+                'choice_label' => 'name',
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -64,6 +71,10 @@ class MediaType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Media::class,
             'is_admin' => false,
+            'validation_groups' => function ($form) {
+                $media = $form->getData();
+                return $media && $media->getId() ? ['Default'] : ['Default', 'create'];
+            },
         ]);
     }
 }

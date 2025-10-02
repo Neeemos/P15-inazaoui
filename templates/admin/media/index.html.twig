@@ -27,6 +27,7 @@
                         <td>{{ media.album.name ?? '' }}</td>
                     {% endif %}
                     <td>
+                     <a href="{{ path('admin_media_update', {id: media.id}) }}" class="btn btn-primary">Modifier</a>
                         <a href="{{ path('admin_media_delete', {id: media.id}) }}" class="btn btn-danger">Supprimer</a>
                     </td>
                 </tr>

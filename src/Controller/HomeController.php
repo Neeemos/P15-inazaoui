@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use App\Repository\MediaRepository;
+use App\Repository\UserRepository;
+
 
 class HomeController extends AbstractController
 {
@@ -22,11 +24,9 @@ class HomeController extends AbstractController
     }
 
     #[Route('/guests', name: 'guests')]
-    public function guests(ManagerRegistry $doctrine): Response
+    public function guests(UserRepository $userRepository): Response
     {
-
-        $guestRepository = $doctrine->getRepository(User::class);
-        $guests = $doctrine->getRepository(User::class)->findGuests();
+        $guests = $userRepository->findGuests();
 
         return $this->render('front/guests.html.twig', [
             'guests' => $guests,
@@ -42,7 +42,7 @@ class HomeController extends AbstractController
     }
 
     #[Route('/portfolio/{id?}', name: 'portfolio')]
-    public function portfolio(ManagerRegistry $doctrine, #[MapEntity] ?Album $album = null, MediaRepository $mediaRepository, AlbumRepository $albumRepository ): Response
+    public function portfolio(ManagerRegistry $doctrine, MediaRepository $mediaRepository, AlbumRepository $albumRepository, #[MapEntity] ?Album $album = null ): Response
     {
 
         $albums = $albumRepository->findAll();

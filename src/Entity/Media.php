@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Media
 {
     #[ORM\Id]
@@ -21,7 +22,7 @@ class Media
     private ?Album $album = null;
 
     #[ORM\Column]
-    private string $path;
+    private ?string $path = null;
 
     #[ORM\Column]
     private string $title;
@@ -43,12 +44,12 @@ class Media
         $this->user = $user;
     }
 
-    public function getPath(): string
+    public function getPath(): ?string
     {
         return $this->path;
     }
 
-    public function setPath(string $path): void
+    public function setPath(?string $path): void
     {
         $this->path = $path;
     }
@@ -81,5 +82,11 @@ class Media
     public function setAlbum(?Album $album): void
     {
         $this->album = $album;
+    }
+    public function deleteFile(): void
+    {
+        if ($this->path && file_exists($this->path)) {
+            @unlink($this->path);
+        }
     }
 }

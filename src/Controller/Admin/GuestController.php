@@ -17,7 +17,8 @@ class GuestController extends AbstractController
     #[Route('/', name: 'admin_guest_index')]
     public function index(EntityManagerInterface $manager): Response
     {
-        $guests = $manager->getRepository(User::class)->findAll();
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $guests = $manager->getRepository(User::class)->findGuests();
 
         return $this->render('admin/guest/index.html.twig', [
             'guests' => $guests,
@@ -27,6 +28,7 @@ class GuestController extends AbstractController
     #[Route('/add', name: 'admin_guest_add')]
     public function add(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
@@ -50,6 +52,7 @@ class GuestController extends AbstractController
     #[Route('/update/{id}', name: 'admin_guest_update')]
     public function edit(int $id, Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $user = $manager->getRepository(User::class)->find($id);
 
         $form = $this->createForm(UserType::class, $user);
@@ -76,17 +79,12 @@ class GuestController extends AbstractController
     #[Route('/delete/{id}', name: 'admin_guest_delete')]
     public function delete(User $user, EntityManagerInterface $manager): Response
     {
-        foreach ($user->getMedias() as $media) {
-            $manager->remove($media);
-            $filePath = $media->getPath();
-            if (file_exists($filePath)) {
-                unlink($filePath);
-            }
-        }
-
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $user->getMedias()->count();
         $manager->remove($user);
         $manager->flush();
 
         return $this->redirectToRoute('admin_guest_index');
     }
 }
+ 

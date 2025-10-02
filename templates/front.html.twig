@@ -27,8 +27,8 @@
 							<a class="nav-link" href="{{ path('about') }}">Qui suis-je ?</a>
 						</li>
 						<li class="nav-item">
-							{% if app.user and is_granted('ROLE_ADMIN') %}
-								<a class="nav-link" href="{{ path('admin_album_index') }}">Panel</a>
+							{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_GUEST') %}
+								<a class="nav-link" href="{{ path('admin_media_index') }}">Panel</a>
 							{% else %}
 								<a class="nav-link" href="{{ path('admin_login') }}">Connexion</a>
 							{% endif %}

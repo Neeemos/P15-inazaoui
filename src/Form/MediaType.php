@@ -27,20 +27,20 @@ class MediaType extends AbstractType
                 'mapped' => false,
                 'required' => false,
                 'constraints' => [
-                    new File([
-                        'maxSize' => '2M',
-                        'mimeTypes' => [
+                    new File(
+                        maxSize: '2M',
+                        mimeTypes: [
                             'image/jpeg',
                             'image/png',
                             'image/jpg',
                             'image/webp',
                         ],
-                        'mimeTypesMessage' => 'Format de fichier non autorisé.',
-                    ]),
-                    new NotBlank([
-                        'message' => 'Veuillez sélectionner un fichier.',
-                        'groups' => ['create'],
-                    ])
+                        mimeTypesMessage: 'Format de fichier non autorisé.',
+                    ),
+                    new NotBlank(
+                        message: 'Veuillez sélectionner un fichier.',
+                        groups: ['create'],
+                    )
                 ],
             ])
             ->add('title', TextType::class, [

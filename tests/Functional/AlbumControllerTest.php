@@ -60,6 +60,7 @@ class AlbumControllerTest extends BaseWebCase
     {
         return $this->em->getRepository(Album::class)->findOneBy(['name' => $name]);
     }
+    
 
     private function deleteAlbumFromPage($client, string $name): void
     {
@@ -71,6 +72,9 @@ class AlbumControllerTest extends BaseWebCase
     }
 
 
+
+
+    
 
     public function testCanAccessPublicAlbums(): void
     {

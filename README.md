@@ -7,7 +7,7 @@
 
 ## 🖼️ Aperçu
 
-![Capture d’écran du site](URL_A_COMPLETER)
+![Capture d’écran du site](https://i.imgur.com/Ijzb25G.png)
 
 ---
 
@@ -55,12 +55,12 @@ composer install
 cp .env .env.local
 ```
 
-➡️ Configure ensuite tes variables (`DATABASE_URL`, `MAILER_DSN`, etc.) selon ton environnement.
+➡️ Configure ensuite tes variables selon ton environnement.
 
 ### 4. Initialiser la base de données
 
 ```bash
-composer database
+composer run database
 ```
 
 Cette commande :
@@ -72,15 +72,13 @@ Cette commande :
 ### 5. Compiler les fichiers CSS
 
 ```bash
-composer compileCss
+composer run compileCss
 ```
 
 ### 6. Lancer le serveur
 
 ```bash
-symfony server:start
-# ou
-php -S 127.0.0.1:8000 -t public
+symfony serve
 ```
 
 ---
@@ -90,7 +88,7 @@ php -S 127.0.0.1:8000 -t public
 ### Lancer la suite de tests
 
 ```bash
-composer test
+composer run test
 ```
 
 Cette commande :
@@ -118,9 +116,11 @@ composer testCoverage
 
 ```
 P15-inazaoui/
-├── assets/                # Fichiers front (CSS, images…)
+├── config/                # Configuration symfony
 ├── migrations/            # Scripts de migration Doctrine
 ├── public/                # Point d’entrée du site
+│   ├── images/            # Images structurel du site
+│   ├── uploads/           # Répertoire de réception des images upload
 │   ├── style.css
 │   └── style.min.css
 ├── src/                   # Code source Symfony (Controllers, Entities, Services…)
@@ -128,8 +128,7 @@ P15-inazaoui/
 ├── tests/                 # Tests unitaires et fonctionnels
 ├── var/                   # Cache, logs, rapport de couverture…
 ├── .env, .env.local       # Configuration d’environnement
-├── composer.json
-└── phpunit.xml.dist
+└── composer.json
 ```
 
 ---
@@ -138,10 +137,10 @@ P15-inazaoui/
 
 | Commande | Description |
 |-----------|-------------|
-| `composer database` | Réinitialise et peuple la base de données |
-| `composer compileCss` | Minifie le CSS principal |
-| `composer test` | Lance les tests unitaires et fonctionnels |
-| `composer testCoverage` | Lance les tests avec couverture de code |
+| `composer run database` | Réinitialise et peuple la base de données |
+| `composer run compileCss` | Minifie le CSS principal |
+| `composer run test` | Lance les tests unitaires et fonctionnels |
+| `composer run testCoverage` | Lance les tests avec couverture de code |
 
 ---
 
@@ -159,12 +158,12 @@ Contacte les mainteneurs ou ouvre une issue privée marquée `security`.
 
 ---
 
-
 ## 💬 Remerciements
 
-Merci à toutes les personnes qui contribuent à faire évoluer **P15 – Inzaoui** ! ❤️  
-Chaque commit, issue ou suggestion aide à améliorer le projet.
+Merci à toutes les personnes qui contribuent à faire évoluer **P15 – Inzaoui** !
+
 
 ---
 
-> _Développé avec Symfony et passion par [Neeemos](https://github.com/Neeemos)._ 🐘
+> _Développé avec Symfony et passion par [Neeemos](https://github.com/Neeemos)._ 
+

@@ -82,8 +82,10 @@ class MediaController extends AbstractController
                 $file->move('uploads/', basename($filename));
             }
 
+            /** @var User|null $user */
+            $user = $this->getUser();
             if (!$this->isGranted('ROLE_ADMIN') && !$media->getUser()) {
-                $media->setUser($this->getUser());
+                $media->setUser($user);
             }
 
             $em = $doctrine->getManager();

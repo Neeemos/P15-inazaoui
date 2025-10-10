@@ -14,6 +14,7 @@ use App\Entity\Album;
  * @method Media|null findOneBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null)
  * @method Media[]    findAll()
  * @method Media[]    findBy(array<string, mixed> $criteria, array<string, string>|null $orderBy = null, $limit = null, $offset = null)
+ * 
  */
 class MediaRepository extends ServiceEntityRepository
 {
@@ -22,6 +23,10 @@ class MediaRepository extends ServiceEntityRepository
         parent::__construct($registry, Media::class);
     }
 
+
+    /**
+     * @return array<int, Media>
+     */
     public function findByAlbumAndUserRole(?Album $album, string $role = 'ROLE_GUEST'): array
     {
         $conn = $this->getEntityManager()->getConnection();

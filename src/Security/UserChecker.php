@@ -11,7 +11,7 @@ class UserChecker implements UserCheckerInterface
 {
     public function checkPreAuth(UserInterface $user): void
     {
-        if (in_array('IS_LOCKED', $user->getRoles())) {
+        if (in_array('IS_LOCKED', $user->getRoles(), true)) {
             throw new CustomUserMessageAccountStatusException('Votre compte est bloqué.');
         }
     }

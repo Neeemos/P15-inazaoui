@@ -26,24 +26,25 @@ final class MediaFactory extends PersistentProxyObjectFactory
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories
      *
      * @todo add your default values here
+     * @return array<string, mixed>
      */
-    protected function Defaults(): array
+    protected function defaults(): array
     {
         return [
             'title' => self::faker()->sentence(3),
-            'path' => 'images/ina.png',
+            'path' => 'images/ina.webp',
             // Lien vers un Album aléatoire déjà créé
             'album' => AlbumFactory::random(),
             // Lien vers un User aléatoire si besoin
             'user' => UserFactory::random(),
         ];
     }
-    public static function createMediaAlbum1($album = null): Media
+    public static function createMediaAlbum1(): Media
     {
         return self::createOne([
             'title' => 'Image INA',
-            'path' => 'images/ina.png',
-            'album' => AlbumFactory::find(['id' => "1"]),
+            'path' => 'images/ina.webp',
+            'album' => AlbumFactory::find(['id' => 1]),
         ]);
     }
     /**

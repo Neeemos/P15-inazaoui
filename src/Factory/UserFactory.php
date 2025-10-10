@@ -25,6 +25,9 @@ final class UserFactory extends PersistentProxyObjectFactory
         return User::class;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function defaults(): array|callable
     {
         return [

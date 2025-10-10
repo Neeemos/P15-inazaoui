@@ -28,7 +28,7 @@
 - **Langage** : PHP 8.2+  
 - **Base de données** : PostgreSQL  
 - **ORM** : Doctrine  
-- **Front-end** : Twig + CSS (minifié via `composer compileCss`)  
+- **Front-end** : Twig + CSS (minifié via `composer run compileCss`)  
 - **Tests** : PHPUnit  
 - **Analyse statique** : PHPStan  
 
@@ -99,7 +99,7 @@ Cette commande :
 ### Générer un rapport de couverture
 
 ```bash
-composer testCoverage
+composer run testCoverage
 ```
 
 ➡️ Le rapport est généré dans `var/coverage/index.html`.

@@ -26,8 +26,9 @@ final class MediaFactory extends PersistentProxyObjectFactory
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories
      *
      * @todo add your default values here
+     * @return array<string, mixed>
      */
-    protected function Defaults(): array
+    protected function defaults(): array
     {
         return [
             'title' => self::faker()->sentence(3),
@@ -38,12 +39,12 @@ final class MediaFactory extends PersistentProxyObjectFactory
             'user' => UserFactory::random(),
         ];
     }
-    public static function createMediaAlbum1($album = null): Media
+    public static function createMediaAlbum1(): Media
     {
         return self::createOne([
             'title' => 'Image INA',
             'path' => 'images/ina.webp',
-            'album' => AlbumFactory::find(['id' => "1"]),
+            'album' => AlbumFactory::find(['id' => 1]),
         ]);
     }
     /**

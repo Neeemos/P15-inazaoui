@@ -13,12 +13,13 @@ class Media
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column]
+    /** @phpstan-ignore-next-line */
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: "medias", fetch: "EAGER")]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(targetEntity: Album::class, fetch: "EAGER",inversedBy: 'medias')]
+    #[ORM\ManyToOne(targetEntity: Album::class, fetch: "EAGER", inversedBy: 'medias')]
     #[ORM\JoinColumn(nullable: true, onDelete: 'CASCADE')]
     private ?Album $album = null;
 

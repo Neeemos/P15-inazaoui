@@ -13,6 +13,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
+/**
+ * @extends AbstractType<User>
+ */
 class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -30,7 +33,7 @@ class UserType extends AbstractType
                 'label' => 'Mot de passe',
                 'attr' => ['placeholder' => 'Entrez le mot de passe de votre invité']
             ])
-              ->add('description', TextType::class, [
+            ->add('description', TextType::class, [
                 'label' => 'Description',
                 'attr' => ['placeholder' => 'Entrez la description de cette utilisateur']
             ])
@@ -44,8 +47,6 @@ class UserType extends AbstractType
                 'multiple' => true,
                 'expanded' => false,
             ]);
-
-
     }
 
     public function configureOptions(OptionsResolver $resolver): void

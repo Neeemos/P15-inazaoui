@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\User;
 use App\Form\UserType;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +19,10 @@ class GuestController extends AbstractController
     public function index(EntityManagerInterface $manager): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $guests = $manager->getRepository(User::class)->findGuests();
+
+        /** @var UserRepository $repo */
+        $repo = $manager->getRepository(User::class);
+        $guests = $repo->findAll();
 
         return $this->render('admin/guest/index.html.twig', [
             'guests' => $guests,
@@ -29,6 +33,7 @@ class GuestController extends AbstractController
     public function add(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
@@ -36,7 +41,11 @@ class GuestController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setRoles($user->getRoles() ?: ['ROLE_GUEST']);
 
-            $user->setPassword($hasher->hashPassword($user, $user->getPassword()));
+        
+            $plain = $user->getPassword();
+            if ($plain !== null && $plain !== '') {
+                $user->setPassword($hasher->hashPassword($user, $plain));
+            }
 
             $manager->persist($user);
             $manager->flush();
@@ -50,17 +59,18 @@ class GuestController extends AbstractController
     }
 
     #[Route('/update/{id}', name: 'admin_guest_update')]
-    public function edit(int $id, Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
+    public function edit(User $user, Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $hasher): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $user = $manager->getRepository(User::class)->find($id);
 
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($user->getPassword()) {
-                $user->setPassword($hasher->hashPassword($user, $user->getPassword()));
+            // si le champ password contient une valeur en clair, on la hash
+            $plain = $user->getPassword();
+            if ($plain !== null && $plain !== '') {
+                $user->setPassword($hasher->hashPassword($user, $plain));
             }
 
             $manager->flush();
@@ -74,17 +84,17 @@ class GuestController extends AbstractController
         ]);
     }
 
-
-
     #[Route('/delete/{id}', name: 'admin_guest_delete')]
     public function delete(User $user, EntityManagerInterface $manager): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        // forcer le chargement si nécessaire (évite certains problèmes de lazy collection)
         $user->getMedias()->count();
+
         $manager->remove($user);
         $manager->flush();
 
         return $this->redirectToRoute('admin_guest_index');
     }
 }
- 

@@ -40,7 +40,7 @@ jobs:
           coverage: none
 
       - name: Validate composer.json and composer.lock
-        run: composer validate
+        run: composer validate --no-check-publish
 
       - name: Cache Composer packages
         id: composer-cache
